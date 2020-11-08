@@ -31,16 +31,16 @@ int main()
     setlocale(LC_ALL, "Rus");
 
     FILE* in  = fopen("shekspir.txt", "rb");
-	assert(in );
-	FILE* out = fopen("result.txt"  , "wb");
+    assert(in );
+    FILE* out = fopen("result.txt"  , "wb");
     assert(out);
 
-	SortFile(in, out);
+    SortFile(in, out);
 
-	fclose(in );
-	fclose(out);
+    fclose(in );
+    fclose(out);
 
-	return 0;
+    return 0;
 }
 
 //*****************************************************************************
@@ -50,23 +50,23 @@ size_t NumberOfSimbols(FILE* fp)
     size_t start_value = ftell(fp);
 
     fseek(fp, 0, SEEK_END);
-	size_t file_size = ftell(fp);
-	fseek(fp, start_value, SEEK_SET);
+    size_t file_size = ftell(fp);
+    fseek(fp, start_value, SEEK_SET);
 
-	return file_size;
+    return file_size;
 }
 
 //-----------------------------------------------------------------------------
 
 size_t NumberOfStrings(size_t simbols, char* buffer)
 {
-	size_t strings = 0;
+    size_t strings = 0;
 
-	for (size_t i = 0; i < simbols; i++)
-        if (buffer[i] == '\n')
-            strings++;
+    for (size_t i = 0; i < simbols; i++)
+    if (buffer[i] == '\n')
+	strings++;
 
-	return strings;
+    return strings;
 }
 
 //-----------------------------------------------------------------------------
@@ -110,16 +110,16 @@ void SortFile(FILE* in, FILE* out)
     size_t simbols = NumberOfSimbols(in);
     assert(simbols);
 
-	char* buffer = MakeBuffer(in, simbols);
+    char* buffer = MakeBuffer(in, simbols);
 
-	size_t strings = NumberOfStrings(simbols, buffer);
-	assert(strings);
+    size_t strings = NumberOfStrings(simbols, buffer);
+    assert(strings);
 
     struct line_t* arrstr = (struct line_t*) calloc(sizeof(struct line_t), strings);
     assert(arrstr);
     FillingStructs(buffer, arrstr);
 
-	free (buffer);
+    free (buffer);
 }
 
 //-----------------------------------------------------------------------------
