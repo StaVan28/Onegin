@@ -16,10 +16,10 @@ struct line_t
 
 //-----------------------------------------------------------------------------
 
-size_t QuantitySimbols(FILE* fp);
-size_t QuantityStrings(size_t quantity_simbols, char* buffer);
+size_t NumberOfSimbols(FILE* fp);
+size_t NumberOfStrings(size_t simbols, char* buffer);
 
-char* MakeBuffer(FILE* in, size_t quantity_simbols);
+char* MakeBuffer(FILE* in, size_t simbols);
 
 void SortFile(FILE* in , FILE* out);
 void FillingStructs(char* buffer, struct line_t* arrays);
@@ -31,34 +31,34 @@ int main()
     setlocale(LC_ALL, "Rus");
 
     FILE* in  = fopen("shekspir.txt", "rb");
-    assert(in );
-    FILE* out = fopen("result.txt"  , "wb");
+	assert(in );
+	FILE* out = fopen("result.txt"  , "wb");
     assert(out);
 
-    SortFile(in, out);
+	SortFile(in, out);
 
-    fclose(in );
-    fclose(out);
+	fclose(in );
+	fclose(out);
 
-    return 0;
+	return 0;
 }
 
 //*****************************************************************************
 
-size_t QuantitySimbols(FILE* fp)
+size_t NumberOfSimbols(FILE* fp)
 {
-	size_t startValue = ftell(fp);
+    size_t start_value = ftell(fp);
 
-	fseek(fp, 0, SEEK_END);
+    fseek(fp, 0, SEEK_END);
 	size_t file_size = ftell(fp);
-	fseek(fp, startValue, SEEK_SET);
+	fseek(fp, start_value, SEEK_SET);
 
 	return file_size;
 }
 
 //-----------------------------------------------------------------------------
 
-size_t QuantityStrings(size_t simbols, char* buffer)
+size_t NumberOfStrings(size_t simbols, char* buffer)
 {
 	size_t strings = 0;
 
@@ -107,19 +107,29 @@ void FillingStructs(char* buffer, struct line_t* array_structs)
 
 void SortFile(FILE* in, FILE* out)
 {
-    size_t simbols = QuantitySimbols(in);
+    size_t simbols = NumberOfSimbols(in);
     assert(simbols);
 
-    char* buffer = MakeBuffer(in, simbols);
+	char* buffer = MakeBuffer(in, simbols);
 
-    size_t strings = QuantityStrings(simbols, buffer);
-    assert(strings);
+	size_t strings = NumberOfStrings(simbols, buffer);
+	assert(strings);
 
     struct line_t* arrstr = (struct line_t*) calloc(sizeof(struct line_t), strings);
     assert(arrstr);
     FillingStructs(buffer, arrstr);
 
-    free (buffer);
+	free (buffer);
 }
 
 //-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
