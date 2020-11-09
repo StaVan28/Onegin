@@ -176,23 +176,25 @@ int (*choose_cmp(const char* mode))(const void*, const void*)
 
 int rhyme_cmp(const void* arg1, const void* arg2)
 {
-    const line_t* parg1 = (const line_t*)arg1;
+   	const line_t* parg1 = (const line_t*)arg1;
 	const line_t* parg2 = (const line_t*)arg2;
 	
-	size_t min = parg1->length <= parg2->length ? parg1->length : parg2->length;
+	size_t length1 = parg1->length;
+	size_t length2 = parg2->length;
 	
+	size_t min = length1 <= length2 ? length1 : length2;
 	for(size_t i = 0; i < min; i++)
 	{
-		while(isspace(parg1->line[parg1->length - i]) ||  isspace(parg2->line[parg2->length - i]))
+		while(isspace(parg1->line[length1 - i]) ||  isspace(parg2->line[length2 - i]))
 			i++;
-		if(parg1->line[parg1->length - i] != parg2->line[parg2->length - i])
-			return parg1->line[parg1->length - i] - parg2->line[parg2->length - i];
+		if(parg1->line[length1 - i] != parg2->line[length2 - i])
+			return parg1->line[length1 - i] - parg2->line[length2 - i];
 	}
 
-	if(parg1->length == parg2->length)
+	if(length1 == length2)
 		return 0;
 
-	if(parg1->length > min)
+	if(length1 > min)
 		return  1;
 	else
 		return -1;
