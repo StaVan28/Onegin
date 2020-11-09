@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <search.h>
@@ -22,9 +21,13 @@ size_t NumberOfStrings(size_t simbols, char* buffer);
 
 char* MakeBuffer(FILE* in, size_t simbols);
 
-void SortFile(FILE* in, FILE* out);
+void SortFile(FILE* in, FILE* out, const char* mode);
 size_t FillingStructs(char* buffer, line_t* arrstr);
-int linecmp(const void* arg1, const void* arg2);
+
+int (*choose_cmp(const char* mode))(const void*, const void*);
+int alphabet_up_cmp  (const void* arg1, const void* arg2);
+int alphabet_down_cmp(const void* arg1, const void* arg2);
+int rhyme_cmp        (const void* arg1, const void* arg2);
 
 void print_structs(line_t* arrstr, size_t n_structs, FILE* out);
 inline void free_memory(line_t* arrstr, char* buffer);
@@ -40,7 +43,7 @@ int main()
 	FILE* out = fopen("result.txt", "wb");
 	assert(out);
 
-	SortFile(in, out);
+	SortFile(in, out, "rhyme");
 
 	fclose(in );
 	fclose(out);
@@ -52,7 +55,7 @@ int main()
 
 size_t NumberOfSimbols(FILE* fp)
 {
-    size_t start_value = ftell(fp);
+    size_t start_value = ftell(fp); 
 
     fseek(fp, 0, SEEK_END);
 	size_t file_size = ftell(fp);
@@ -117,7 +120,7 @@ size_t FillingStructs(char* buffer, line_t* arrstr)
 
 //-----------------------------------------------------------------------------
 
-void SortFile(FILE* in, FILE* out)
+void SortFile(FILE* in, FILE* out, const char* mode)
 {
     size_t simbols = NumberOfSimbols(in);
     assert(simbols);
@@ -130,7 +133,9 @@ void SortFile(FILE* in, FILE* out)
     assert(arrstr);
     size_t n_structs = FillingStructs(buffer, arrstr);
 
-    qsort(arrstr, n_structs, sizeof(line_t), linecmp);
+	int (*compare)(const void*, const void*) = choose_cmp(mode);
+
+    qsort(arrstr, n_structs, sizeof(line_t), compare);
 
     print_structs(arrstr, n_structs, out);
 
@@ -139,13 +144,59 @@ void SortFile(FILE* in, FILE* out)
 
 //-----------------------------------------------------------------------------
 
- int linecmp(const void* arg1, const void* arg2)
+int (*choose_cmp(const char* mode))(const void*, const void*)
+{
+	if(!strcmp(mode, "alphabet++"))
+		return alphabet_up_cmp;
+	else if(!strcmp(mode, "alphabet--"))
+		return alphabet_down_cmp;
+	else if(!strcmp(mode, "rhyme"))
+		return rhyme_cmp; 
+}
+
+//-----------------------------------------------------------------------------
+
+ int alphabet_up_cmp(const void* arg1, const void* arg2)
  {
      const line_t* parg1 = (const line_t*)arg1;
      const line_t* parg2 = (const line_t*)arg2;
      return strcmp(parg1->line, parg2->line);
  }
 
+//-----------------------------------------------------------------------------
+
+ int alphabet_down_cmp(const void* arg1, const void* arg2)
+ {
+     const line_t* parg1 = (const line_t*)arg1;
+     const line_t* parg2 = (const line_t*)arg2;
+     return strcmp(parg2->line, parg1->line);
+ }
+
+//-----------------------------------------------------------------------------
+
+int rhyme_cmp(const void* arg1, const void* arg2)
+{
+    const line_t* parg1 = (const line_t*)arg1;
+	const line_t* parg2 = (const line_t*)arg2;
+	
+	size_t min = parg1->length <= parg2->length ? parg1->length : parg2->length;
+	
+	for(size_t i = 0; i < min; i++)
+	{
+		while(isspace(parg1->line[parg1->length - i]) ||  isspace(parg2->line[parg2->length - i]))
+			i++;
+		if(parg1->line[parg1->length - i] != parg2->line[parg2->length - i])
+			return parg1->line[parg1->length - i] - parg2->line[parg2->length - i];
+	}
+
+	if(parg1->length == parg2->length)
+		return 0;
+
+	if(parg1->length > min)
+		return  1;
+	else
+		return -1;
+}
 //-----------------------------------------------------------------------------
 
 void print_structs(line_t* arrstr, size_t n_structs, FILE* out)
@@ -164,10 +215,6 @@ inline void free_memory(line_t* arrstr, char* buffer)
 }
 
 //-----------------------------------------------------------------------------
-
-
-
-
 
 
 
