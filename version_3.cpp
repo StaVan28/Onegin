@@ -76,16 +76,6 @@ int main()
 
 //*****************************************************************************
 
-inline void print_hello(void)
-{
-    printf("    Hello!\n You can choose three types of sorting:\n");
-    printf(" alphabet++ (sort ascending),\n");
-    printf(" alphabet-- (descending sort),\n rhyme      (sorting by rhyme).\n\n");
-    printf("    Please choose one:\n");
-}
-
-//-----------------------------------------------------------------------------
-
 size_t NumberOfSimbols(FILE* fp)
 {
     assert(fp);
