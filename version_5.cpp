@@ -52,9 +52,9 @@ inline void free_memory(line_t* arrstr, char* buffer);
 
 int main()
 {
-    setlocale(LC_ALL, "Rus");
+	setlocale(LC_ALL, "Rus");
 
-    FILE* in  = fopen("onegin.txt", "rb");
+	FILE* in  = fopen("onegin.txt", "rb");
 	if(!in)  return FILE_OPENING_ERROR;
 
 	//!TODO if (errno != 0) perror (errno, "Error on line %d", __LINE__);
@@ -79,11 +79,11 @@ int main()
 
 size_t NumberOfSimbols(FILE* fp)
 {
-    if(!fp) return FILE_OPENING_ERROR;
+	if(!fp) return FILE_OPENING_ERROR;
 
-    size_t start_value = ftell(fp);
-
-    fseek(fp, 0, SEEK_END);
+	size_t start_value = ftell(fp);
+	
+	fseek(fp, 0, SEEK_END);
 	size_t file_size = ftell(fp);
 	fseek(fp, start_value, SEEK_SET);
 
@@ -275,7 +275,7 @@ int rhyme_cmp(const void* arg1, const void* arg2)
         while(isspace(parg1->line[length1 - index_second]))
             index_second++;
 
-		if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
+	if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
             return parg1->line[length1 - index_first] - parg2->line[length2 - index_second];
 
         index_first++;
