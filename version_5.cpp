@@ -47,43 +47,44 @@ int rhyme_cmp        (const void* arg1, const void* arg2);
 
 inline void print_structs(line_t* arrstr, size_t n_structs, FILE* out);
 inline void free_memory(line_t* arrstr, char* buffer);
+inline void print_error(void);
 
 //*****************************************************************************
 
 int main()
 {
-	setlocale(LC_ALL, "Rus");
+    setlocale(LC_ALL, "Rus");
 
-	FILE* in  = fopen("onegin.txt", "rb");
-	if(!in)  return FILE_OPENING_ERROR;
-
-	//!TODO if (errno != 0) perror (errno, "Error on line %d", __LINE__);
+    FILE* in  = fopen("onegin.txt", "rb");
+    assert(in);
 
 	FILE* out = fopen("result.txt", "wb");
-	if(!out) return FILE_OPENING_ERROR;
+	assert(out);
 
 //You can choose three types of sorting: "alphabet++" (sort ascending),
 //"alphabet--" (descending sort), "rhyme" (sorting by rhyme)
 	SortFile(in, out, "alphabet++");
 
 	fclose(in);
-	if(!in)  return FILE_CLOSING_ERROR;
+	assert(in);
 
 	fclose(out);
-	if(!out) return FILE_CLOSING_ERROR;
+	assert(out);
 
-	return SUCCESS;
+	print_error();
+
+    return SUCCESS;
 }
 
 //*****************************************************************************
 
 size_t NumberOfSimbols(FILE* fp)
 {
-	if(!fp) return FILE_OPENING_ERROR;
+    if(!fp) return FILE_OPENING_ERROR;
 
-	size_t start_value = ftell(fp);
-	
-	fseek(fp, 0, SEEK_END);
+    size_t start_value = ftell(fp);
+
+    fseek(fp, 0, SEEK_END);
 	size_t file_size = ftell(fp);
 	fseek(fp, start_value, SEEK_SET);
 
@@ -137,7 +138,7 @@ size_t FillingStructs(char* buffer, line_t* arrstr)
     while(true)
     {
         while(isspace(buffer[index]))
-		index++;
+			index++;
 
         arrstr[n_structs].line = &(buffer[index]);
 
@@ -165,30 +166,30 @@ size_t SortFile(FILE* in, FILE* out, const char* mode)
 	if(!in ) return FILE_OPENING_ERROR;
 	if(!out) return FILE_OPENING_ERROR;
 
-	size_t n_symbols = NumberOfSimbols(in);
-	if(!n_symbols) return CHARACTER_COUNT_ERROR;
+    size_t n_symbols = NumberOfSimbols(in);
+    if(!n_symbols) return CHARACTER_COUNT_ERROR;
 
 	char* buffer = MakeBuffer(in, n_symbols);
 	if(buffer == nullptr) return MEMORY_ALLOCATION_ERROR;
-	
-	size_t n_strings = NumberOfStrings(n_symbols, buffer);
+
+    size_t n_strings = NumberOfStrings(n_symbols, buffer);
 	if(!n_strings) return STRINGS_COUNT_ERROR;
 
-	line_t* arrstr = (line_t*) calloc(sizeof(line_t), n_strings);
-	if(arrstr == nullptr) return MEMORY_ALLOCATION_ERROR;
+    line_t* arrstr = (line_t*) calloc(sizeof(line_t), n_strings);
+    if(arrstr == nullptr) return MEMORY_ALLOCATION_ERROR;
 
-	size_t n_structs = FillingStructs(buffer, arrstr);
-	if(n_structs == 1) return FILLING_STRUCTURES_ERROR;
+    size_t n_structs = FillingStructs(buffer, arrstr);
+    if(n_structs == 1) return FILLING_STRUCTURES_ERROR;
 
 	int (*compare)(const void*, const void*) = choose_cmp(mode);
 
-	qsort(arrstr, n_structs, sizeof(line_t), compare);
+    qsort(arrstr, n_structs, sizeof(line_t), compare);
 
-	print_structs(arrstr, n_structs, out);
+    print_structs(arrstr, n_structs, out);
 
-	free_memory(arrstr, buffer);
+    free_memory(arrstr, buffer);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
@@ -201,8 +202,8 @@ int (*choose_cmp(const char* mode))(const void*, const void*)
 		return alphabet_down_cmp;
 	else if(!strcmp(mode, "rhyme"))
 		return rhyme_cmp;
-	
-	exit(COMPILER_INPUT_ERROR);
+
+    exit(COMPILER_INPUT_ERROR);
 }
 
 //-----------------------------------------------------------------------------
@@ -275,7 +276,7 @@ int rhyme_cmp(const void* arg1, const void* arg2)
         while(isspace(parg1->line[length1 - index_second]))
             index_second++;
 
-	if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
+		if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
             return parg1->line[length1 - index_first] - parg2->line[length2 - index_second];
 
         index_first++;
@@ -303,6 +304,41 @@ inline void free_memory(line_t* arrstr, char* buffer)
 
 //-----------------------------------------------------------------------------
 
+inline void print_error(void)
+{
+    switch(errno)
+    {
+        case SUCCESS:
+            break;
+        case FILE_OPENING_ERROR:
+            printf("FILE OPENING ERROR in file (%s)", __FILE__);
+            break;
+        case FILE_CLOSING_ERROR:
+            printf("FILE CLOSING ERROR in file (%s)", __FILE__);
+            break;
+        case MEMORY_ALLOCATION_ERROR:
+            printf("MEMORY ALLOCATION ERROR in file (%s)", __FILE__);
+            break;
+        case FILE_READ_ERROR:
+            printf("FILE READ ERROR in file (%s)", __FILE__);
+            break;
+        case FILLING_STRUCTURES_ERROR:
+            printf("FILLING STRUCTURES ERROR in file (%s)", __FILE__);
+            break;
+        case COMPILER_INPUT_ERROR:
+            printf("COMPILER INPUT ERROR in file (%s)", __FILE__);
+            break;
+        case CHARACTER_COUNT_ERROR:
+            printf("FILE OPENING ERROR in file (%s)", __FILE__);
+            break;
+        case STRINGS_COUNT_ERROR:
+            printf("FILE OPENING ERROR in file (%s)", __FILE__);
+            break;
+        default:
+            printf("UNKNOW ERROR in file (%s)", __FILE__);
+            break;
+    }
+}
 
-
+//-----------------------------------------------------------------------------
 
