@@ -137,7 +137,7 @@ size_t FillingStructs(char* buffer, line_t* arrstr)
     while(true)
     {
         while(isspace(buffer[index]))
-			index++;
+		index++;
 
         arrstr[n_structs].line = &(buffer[index]);
 
@@ -165,30 +165,30 @@ size_t SortFile(FILE* in, FILE* out, const char* mode)
 	if(!in ) return FILE_OPENING_ERROR;
 	if(!out) return FILE_OPENING_ERROR;
 
-    size_t n_symbols = NumberOfSimbols(in);
-    if(!n_symbols) return CHARACTER_COUNT_ERROR;
+	size_t n_symbols = NumberOfSimbols(in);
+	if(!n_symbols) return CHARACTER_COUNT_ERROR;
 
 	char* buffer = MakeBuffer(in, n_symbols);
 	if(buffer == nullptr) return MEMORY_ALLOCATION_ERROR;
-
-    size_t n_strings = NumberOfStrings(n_symbols, buffer);
+	
+	size_t n_strings = NumberOfStrings(n_symbols, buffer);
 	if(!n_strings) return STRINGS_COUNT_ERROR;
 
-    line_t* arrstr = (line_t*) calloc(sizeof(line_t), n_strings);
-    if(arrstr == nullptr) return MEMORY_ALLOCATION_ERROR;
+	line_t* arrstr = (line_t*) calloc(sizeof(line_t), n_strings);
+	if(arrstr == nullptr) return MEMORY_ALLOCATION_ERROR;
 
-    size_t n_structs = FillingStructs(buffer, arrstr);
-    if(n_structs == 1) return FILLING_STRUCTURES_ERROR;
+	size_t n_structs = FillingStructs(buffer, arrstr);
+	if(n_structs == 1) return FILLING_STRUCTURES_ERROR;
 
 	int (*compare)(const void*, const void*) = choose_cmp(mode);
 
-    qsort(arrstr, n_structs, sizeof(line_t), compare);
+	qsort(arrstr, n_structs, sizeof(line_t), compare);
 
-    print_structs(arrstr, n_structs, out);
+	print_structs(arrstr, n_structs, out);
 
-    free_memory(arrstr, buffer);
+	free_memory(arrstr, buffer);
 
-    return SUCCESS;
+	return SUCCESS;
 }
 
 //-----------------------------------------------------------------------------
@@ -201,8 +201,8 @@ int (*choose_cmp(const char* mode))(const void*, const void*)
 		return alphabet_down_cmp;
 	else if(!strcmp(mode, "rhyme"))
 		return rhyme_cmp;
-
-    exit(COMPILER_INPUT_ERROR);
+	
+	exit(COMPILER_INPUT_ERROR);
 }
 
 //-----------------------------------------------------------------------------
