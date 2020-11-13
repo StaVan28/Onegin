@@ -275,7 +275,7 @@ int rhyme_cmp(const void* arg1, const void* arg2)
         while(isspace(parg1->line[length1 - index_second]))
             index_second++;
 
-		if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
+	if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
             return parg1->line[length1 - index_first] - parg2->line[length2 - index_second];
 
         index_first++;
