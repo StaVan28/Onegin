@@ -6,35 +6,37 @@
 #include <assert.h>
 #include <locale.h>
 #include <ctype.h>
+//errno - gloval var
+//perror
 
 //-----------------------------------------------------------------------------
 
 enum Errors
 {
-     FILE_OPENING_ERROR       = 1,
-     FILE_CLOSING_ERROR       = 2,
-     MEMORY_ALLOCATION_ERROR  = 3,
-     FILE_READ_ERROR          = 4,
-     FILLING_STRUCTURES_ERROR = 5,
-     COMPILER_INPUT_ERROR     = 6,
-     CHARACTER_COUNT_ERROR    = 7,
-     STRINGS_COUNT_ERROR      = 8,
-     SUCCESS                  = 0
+     SUCCESS                  ,
+     FILE_OPENING_ERROR       ,
+     FILE_CLOSING_ERROR       ,
+     MEMORY_ALLOCATION_ERROR  ,
+     FILE_READ_ERROR          ,
+     FILLING_STRUCTURES_ERROR ,
+     COMPILER_INPUT_ERROR     ,
+     CHARACTER_COUNT_ERROR    ,
+     STRINGS_COUNT_ERROR      
 };
 
 //-----------------------------------------------------------------------------
 
 struct line_t
 {
-    size_t length;
-    char*  line;
+    size_t length = 0;
+    char*  line   = nullptr;
 };
 
 //-----------------------------------------------------------------------------
 
 size_t NumberOfSimbols(FILE* fp);
 size_t NumberOfStrings(size_t simbols, char* buffer);
-
+//названия переменных
 char* MakeBuffer(FILE* in, size_t simbols);
 
 size_t SortFile(FILE* in, FILE* out, const char* mode);
@@ -56,6 +58,8 @@ int main()
 
     FILE* in  = fopen("onegin.txt", "rb");
 	if(!in)  return FILE_OPENING_ERROR;
+	
+	//!TODO if (errno != 0) perror (errno, "Error on line %d", __LINE__);
 
 	FILE* out = fopen("result.txt", "wb");
 	if(!out) return FILE_OPENING_ERROR;
@@ -101,7 +105,7 @@ size_t NumberOfSimbols(FILE* fp)
 //-----------------------------------------------------------------------------
 
 size_t NumberOfStrings(size_t simbols, char* buffer)
-{
+{//!TODO FIX VARIABLE'S NAME
     assert(simbols);
     assert(buffer);
 
@@ -144,18 +148,23 @@ size_t FillingStructs(char* buffer, line_t* arrstr)
 
     while(true)
     {
-        while(isspace(buffer[i]))
-            i++;
+        while(isspace(buffer[i])) i++;
+	    
         arrstr[n_structs].line = &(buffer[i]);
+	    
         while(buffer[i] != '\n')
         {
+		
             if(buffer[i] == '\0')
             {
                 arrstr[n_structs].length = &(buffer[i]) - arrstr[n_structs].line;
                 return n_structs + 1;
             }
+		
             i++;
+		
         }
+	    
         arrstr[n_structs].length = &(buffer[i]) - arrstr[n_structs].line;
         n_structs++;
     }
@@ -164,7 +173,7 @@ size_t FillingStructs(char* buffer, line_t* arrstr)
 //-----------------------------------------------------------------------------
 
 size_t SortFile(FILE* in, FILE* out, const char* mode)
-{
+{//assert files
     size_t simbols = NumberOfSimbols(in);
     if(!simbols) return CHARACTER_COUNT_ERROR;
 
@@ -216,11 +225,13 @@ int (*choose_cmp(const char* mode))(const void*, const void*)
     size_t length2 = parg2->length;
 
     size_t min = length1 <= length2 ? length1 : length2;
+	 
     for(size_t i = 0; i < min; i++)
     {
         if(parg1->line[i] != parg2->line[i])
             return parg1->line[i] - parg2->line[i];
     }
+	 
     if(length1 == length2)
         return 0;
     else
@@ -264,7 +275,7 @@ int rhyme_cmp(const void* arg1, const void* arg2)
 
 	size_t min = length1 <= length2 ? length1 : length2;
 
-	size_t i = 0;
+	size_t i = 0;//CharIndexFirstLine
 	size_t j = 0;
 
 	while(i < min && j < min)
@@ -285,10 +296,10 @@ int rhyme_cmp(const void* arg1, const void* arg2)
 //-----------------------------------------------------------------------------
 
 inline void print_structs(line_t* arrstr, size_t n_structs, FILE* out)
-{
-    for(size_t j = 0; j < n_structs; j++)
+{//переписать
+    for(size_t j = 0; j < n_structs; j++)//посимвольный вывод - гавно
         for(size_t i = 0; i < arrstr[j].length; i++)
-            fprintf(out, "%c", arrstr[j].line[i]);
+            fprintf(out, "%c", arrstr[j].line[i]);//fprintf - гавно. Меняем на fwrite
 }
 
 //-----------------------------------------------------------------------------
