@@ -275,7 +275,7 @@ int rhyme_cmp(const void* arg1, const void* arg2)
         while(isspace(parg1->line[length1 - index_second]))
             index_second++;
 
-	if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
+		if(parg1->line[length1 - index_first] != parg2->line[length2 - index_second])
             return parg1->line[length1 - index_first] - parg2->line[length2 - index_second];
 
         index_first++;
@@ -288,8 +288,9 @@ int rhyme_cmp(const void* arg1, const void* arg2)
 
 inline void print_structs(line_t* arrstr, size_t n_structs, FILE* out)
 {
-	  for(size_t index = 0; index < n_structs; index++)
-            fwrite(arrstr[index].line, n_structs, sizeof(arrstr), out);
+    for(size_t j = 0; j < n_structs; j++)
+        for(size_t i = 0; i < arrstr[j].length; i++)
+            fprintf(out, "%c", arrstr[j].line[i]);
 }
 
 //-----------------------------------------------------------------------------
@@ -301,6 +302,7 @@ inline void free_memory(line_t* arrstr, char* buffer)
 }
 
 //-----------------------------------------------------------------------------
+
 
 
 
