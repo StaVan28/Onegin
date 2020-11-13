@@ -22,7 +22,6 @@ enum Errors
      SUCCESS                  = 0
 };
 
-
 //-----------------------------------------------------------------------------
 
 struct line_t
@@ -63,7 +62,7 @@ int main()
 
 //You can choose three types of sorting: "alphabet++" (sort ascending),
 //"alphabet--" (descending sort), "rhyme" (sorting by rhyme)
-	SortFile(in, out, "alphabet++");
+	SortFile(in, out, "rhyme");
 
 	fclose(in);
 	if(!in)  return FILE_CLOSING_ERROR;
@@ -75,6 +74,16 @@ int main()
 }
 
 //*****************************************************************************
+
+inline void print_hello(void)
+{
+    printf("    Hello!\n You can choose three types of sorting:\n");
+    printf(" alphabet++ (sort ascending),\n");
+    printf(" alphabet-- (descending sort),\n rhyme      (sorting by rhyme).\n\n");
+    printf("    Please choose one:\n");
+}
+
+//-----------------------------------------------------------------------------
 
 size_t NumberOfSimbols(FILE* fp)
 {
@@ -163,7 +172,7 @@ size_t SortFile(FILE* in, FILE* out, const char* mode)
 	if(buffer == nullptr) return MEMORY_ALLOCATION_ERROR;
 
     size_t strings = NumberOfStrings(simbols, buffer);
-    if(!strings) return STRINGS_COUNT_ERROR;
+	if(!strings) return STRINGS_COUNT_ERROR;
 
     line_t* arrstr = (line_t*) calloc(sizeof(line_t), strings);
     if(buffer == nullptr) return MEMORY_ALLOCATION_ERROR;
@@ -200,18 +209,47 @@ int (*choose_cmp(const char* mode))(const void*, const void*)
 
  int alphabet_up_cmp(const void* arg1, const void* arg2)
  {
-     const line_t* parg1 = (const line_t*)arg1;
-     const line_t* parg2 = (const line_t*)arg2;
-     return strcmp(parg1->line, parg2->line);
+    const line_t* parg1 = (const line_t*)arg1;
+    const line_t* parg2 = (const line_t*)arg2;
+
+    size_t length1 = parg1->length;
+    size_t length2 = parg2->length;
+
+    size_t min = length1 <= length2 ? length1 : length2;
+    for(size_t i = 0; i < min; i++)
+    {
+        if(parg1->line[i] != parg2->line[i])
+            return parg1->line[i] - parg2->line[i];
+    }
+    if(length1 == length2)
+        return 0;
+    else
+        return length1 - length2;
+ //   return strcmp(parg1->line, parg2->line);
  }
 
 //-----------------------------------------------------------------------------
 
  int alphabet_down_cmp(const void* arg1, const void* arg2)
  {
-     const line_t* parg1 = (const line_t*)arg1;
-     const line_t* parg2 = (const line_t*)arg2;
-     return strcmp(parg2->line, parg1->line);
+    const line_t* parg1 = (const line_t*)arg1;
+    const line_t* parg2 = (const line_t*)arg2;
+
+    size_t length1 = parg1->length;
+    size_t length2 = parg2->length;
+
+    size_t min = length1 <= length2 ? length1 : length2;
+    for(size_t i = 0; i < min; i++)
+    {
+        if(parg1->line[i] != parg2->line[i])
+            return parg2->line[i] - parg1->line[i];
+    }
+    if(length1 == length2)
+        return 0;
+    else
+        return length2 - length1;
+
+//   return strcmp(parg2->line, parg1->line);
  }
 
 //-----------------------------------------------------------------------------
@@ -225,16 +263,25 @@ int rhyme_cmp(const void* arg1, const void* arg2)
 	size_t length2 = parg2->length;
 
 	size_t min = length1 <= length2 ? length1 : length2;
-	for(size_t i = 0; i < min; i++)
-	{
-		while(isspace(parg1->line[length1 - i]) ||  isspace(parg2->line[length2 - i]))
-			i++;
-		while(parg1->line[length1 - i] != parg2->line[length2 - i])
-			return parg1->line[length1 - i] - parg2->line[length2 - i];
-	}
 
+	size_t i = 0;
+	size_t j = 0;
+
+	while(i < min && j < min)
+	{
+        while(isspace(parg1->line[length1 - i]))
+            i++;
+        while(isspace(parg1->line[length1 - j]))
+            j++;
+
+		if(parg1->line[length1 - i] != parg2->line[length2 - i])
+                return parg1->line[length1 - i] - parg2->line[length2 - i];
+        i++;
+        j++;
+	}
     return 0;
 }
+
 //-----------------------------------------------------------------------------
 
 inline void print_structs(line_t* arrstr, size_t n_structs, FILE* out)
