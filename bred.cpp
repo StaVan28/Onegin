@@ -89,5 +89,9 @@ size_t bred_generator(line_t* arrstr, size_t n_structs, const char* bred_mode)
 
     for (size_t j = 0; j < arrstr[random1].length; j++)
         fprintf (bred_file, "%c", arrstr[random1].line[j]);
+    
+    fprintf(bred_file, "\n");
+    
+    fclose(bredfile);
 
 }
