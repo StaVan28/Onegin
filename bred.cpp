@@ -4,7 +4,7 @@
 
 //-----------------------------------------------------------------------------
 
-size_t bred_generator(line_t* arrstr, size_t n_structs, const char* bred_mode)
+void bred_generator(line_t* arrstr, size_t n_structs, const char* bred_mode)
 {
     if(strcmp("bred", bred_mode))
        return EXIT;
