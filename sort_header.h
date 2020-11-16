@@ -11,6 +11,6 @@ int alphabet_down_cmp(const void* arg1, const void* arg2);
 
 int rhyme_cmp        (const void* arg1, const void* arg2);
 
-size_t bred_generator(line_t* arrstr, size_t n_structs, const char* bred_mode);
+void bred_generator(line_t* arrstr, size_t n_structs, const char* bred_mode);
 
 #endif // SORT_HEADER_H_INCLUDED
