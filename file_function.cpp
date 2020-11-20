@@ -63,7 +63,11 @@ size_t FillingStructs(char* buffer, line_t* arrstr)
 
     while(true)
     {
-        while(isspace(buffer[index]))
+        while(isspace(buffer[index]) || isdigit(buffer[index])   \
+             || (buffer[index] == '*') || (buffer[index] == 'X') \
+             || (buffer[index] == 'L') || (buffer[index] == 'I') \
+             || (buffer[index] == 'V') || (buffer[index] == '…') \
+             || (buffer[index] == '.'))
 			index++;
 
         arrstr[n_structs].line = &(buffer[index]);
