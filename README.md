@@ -1,1 +1,1 @@
-Program for parcing test
+Program for parcing text
